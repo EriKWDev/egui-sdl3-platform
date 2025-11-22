@@ -241,7 +241,7 @@ impl Platform {
     /// Stop drawing the egui frame and handle the egui::FullOutput
     pub fn end_frame(
         &mut self,
-        video: &mut sdl3::VideoSubsystem,
+        video: &sdl3::VideoSubsystem,
         output: &egui::FullOutput,
     ) -> crate::Result<()> {
         for c in &output.platform_output.commands {
