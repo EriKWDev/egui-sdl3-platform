@@ -31,9 +31,9 @@ let mut event_pump = sdl.event_pump().unwrap();
     egui_sdl3.begin_frame(&window);
     // draw egui ui with your egui_context and finish with the egui::FullOutput
     let full_output: egui::FullOutput = /* .. */;
-    egui_sdl3.end_frame(&mut sdl.video().unwrap(), &egui_context, &full_output);
+    let platform_output = &full_output.platform_output;
+    egui_sdl3.end_frame(&mut sdl.video().unwrap(), &egui_context, &platform_output);
 
-    
     // draw the output using your graphics API
 
     swapchain.present(0, dxgi::PresentFlags::empty());

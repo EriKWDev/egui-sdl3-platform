@@ -238,13 +238,13 @@ impl Platform {
         self.raw_input.time = Some(self.start_time.elapsed().as_secs_f64());
     }
 
-    /// Stop drawing the egui frame and handle the egui::FullOutput
+    /// Stop drawing the egui frame and handle the egui::PlatformOutput
     pub fn end_frame(
         &mut self,
         video: &sdl3::VideoSubsystem,
-        output: &egui::FullOutput,
+        platform_output: &egui::PlatformOutput,
     ) -> crate::Result<()> {
-        for c in &output.platform_output.commands {
+        for c in &platform_output.commands {
             if let egui::OutputCommand::CopyText(text) = c {
                 if let Err(e) = video.clipboard().set_clipboard_text(text) {
                     log::error!("Failed to assign text to clipboard: {}", e);
@@ -254,7 +254,7 @@ impl Platform {
 
         if let Some(cursor) = &mut self.cursor {
             // Update the cursor icon
-            let new_cursor = match output.platform_output.cursor_icon {
+            let new_cursor = match platform_output.cursor_icon {
                 egui::CursorIcon::Crosshair => SystemCursor::Crosshair,
                 egui::CursorIcon::Default => SystemCursor::Arrow,
                 egui::CursorIcon::Grab => SystemCursor::Hand,
