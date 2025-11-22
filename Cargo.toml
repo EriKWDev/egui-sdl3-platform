@@ -13,7 +13,7 @@ keywords = ["egui", "sdl3", "sdl", "gui", "platform"]
 include = ["**/*.rs", "Cargo.toml"]
 
 [dependencies]
-egui = "0.33.0"
-log = "0.4.28"
-sdl3 = "0.15.1"
-thiserror = "2.0.17"
+egui = "0.33"
+log = "0"
+sdl3 = "0"
+thiserror = "2"
