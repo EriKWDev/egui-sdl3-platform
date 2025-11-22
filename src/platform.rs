@@ -9,20 +9,16 @@ use crate::conversions::ToEguiKey;
 /// The sdl3 platform for egui
 pub struct Platform {
     // The cursors for the platform
-    cursor: Option<Cursor>,
-    system_cursor: SystemCursor,
+    pub cursor: Option<Cursor>,
+    pub system_cursor: SystemCursor,
     // The position of the mouse pointer
-    pointer_pos: Pos2,
+    pub pointer_pos: Pos2,
     // The egui modifiers
-    modifiers: Modifiers,
+    pub modifiers: Modifiers,
     // The raw input
-    raw_input: egui::RawInput,
-
-    start_time: std::time::Instant,
-    pixels_per_point: f32,
-
-    // The egui context
-    egui_ctx: egui::Context,
+    pub raw_input: egui::RawInput,
+    pub start_time: std::time::Instant,
+    pub pixels_per_point: f32,
 }
 
 impl Platform {
@@ -47,13 +43,17 @@ impl Platform {
             },
             pixels_per_point: 1.0,
             modifiers: Modifiers::default(),
-            egui_ctx: egui::Context::default(),
             start_time: std::time::Instant::now(),
         })
     }
 
     /// Handle a sdl3 event
-    pub fn handle_event(&mut self, event: &Event, video: &sdl3::VideoSubsystem) {
+    pub fn handle_event(
+        &mut self,
+        event: &Event,
+        video: &sdl3::VideoSubsystem,
+        egui_ctx: &egui::Context,
+    ) {
         match event {
             // Handle reizing
             Event::Window {
@@ -84,7 +84,7 @@ impl Platform {
                         modifiers: self.modifiers,
                     });
                 }
-                self.egui_ctx.wants_pointer_input();
+                egui_ctx.wants_pointer_input();
             }
             // Handle the mouse button being released
             Event::MouseButtonUp { mouse_btn, .. } => {
@@ -102,7 +102,7 @@ impl Platform {
                         modifiers: self.modifiers,
                     });
                 }
-                self.egui_ctx.wants_pointer_input();
+                egui_ctx.wants_pointer_input();
             }
             // Handle mouse motion
             Event::MouseMotion { x, y, .. } => {
@@ -111,7 +111,7 @@ impl Platform {
                 self.raw_input
                     .events
                     .push(egui::Event::PointerMoved(self.pointer_pos));
-                self.egui_ctx.wants_pointer_input();
+                egui_ctx.wants_pointer_input();
             }
             // Handle the mouse scrolling
             Event::MouseWheel { x, y, .. } => {
@@ -123,7 +123,7 @@ impl Platform {
                     delta,
                     modifiers: egui::Modifiers::NONE,
                 });
-                self.egui_ctx.wants_pointer_input();
+                egui_ctx.wants_pointer_input();
             }
 
             // Handle a key being pressed
@@ -177,7 +177,7 @@ impl Platform {
                         });
                     }
                 }
-                self.egui_ctx.wants_keyboard_input();
+                egui_ctx.wants_keyboard_input();
             }
             // Handle a key being released
             Event::KeyUp {
@@ -214,48 +214,36 @@ impl Platform {
                         });
                     }
                 }
-                self.egui_ctx.wants_keyboard_input();
+                egui_ctx.wants_keyboard_input();
             }
             // Handle text input
             Event::TextInput { text, .. } => {
                 self.raw_input.events.push(egui::Event::Text(text.clone()));
-                self.egui_ctx.wants_keyboard_input();
+                egui_ctx.wants_keyboard_input();
             }
 
             _ => {}
         }
     }
 
-    pub fn context(&self) -> &egui::Context {
-        &self.egui_ctx
-    }
-
-    /// Return the processed context
-    pub fn begin_frame(&mut self, window: &sdl3::video::Window) -> egui::Context {
+    pub fn begin_frame(&mut self, window: &sdl3::video::Window, egui_ctx: &egui::Context) {
         let screen_size = window.size();
         self.pixels_per_point = window.display_scale();
         // Set the pixels per point
-        self.egui_ctx.set_pixels_per_point(self.pixels_per_point);
+        egui_ctx.set_pixels_per_point(self.pixels_per_point);
         self.raw_input.screen_rect = Some(egui::Rect::from_min_size(
             egui::Pos2::ZERO,
             egui::vec2(screen_size.0 as f32, screen_size.1 as f32) / self.pixels_per_point,
         ));
         self.raw_input.time = Some(self.start_time.elapsed().as_secs_f64());
-
-        // Begin the frame
-        self.egui_ctx.begin_pass(self.raw_input.take());
-        // Return the ctx
-        self.egui_ctx.clone()
     }
 
-    /// Stop drawing the egui frame and return the full output
+    /// Stop drawing the egui frame and handle the egui::FullOutput
     pub fn end_frame(
         &mut self,
         video: &mut sdl3::VideoSubsystem,
-    ) -> crate::Result<egui::FullOutput> {
-        // Get the egui output
-        let output = self.egui_ctx.end_pass();
-
+        output: &egui::FullOutput,
+    ) -> crate::Result<()> {
         for c in &output.platform_output.commands {
             if let egui::OutputCommand::CopyText(text) = c {
                 if let Err(e) = video.clipboard().set_clipboard_text(text) {
@@ -290,12 +278,6 @@ impl Platform {
             }
         }
 
-        Ok(output)
-    }
-
-    /// Tessellate the egui frame
-    pub fn tessellate(&self, full_output: &egui::FullOutput) -> Vec<egui::ClippedPrimitive> {
-        self.egui_ctx
-            .tessellate(full_output.shapes.clone(), self.egui_ctx.pixels_per_point())
+        Ok(())
     }
 }

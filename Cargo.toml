@@ -1,8 +1,8 @@
 [package]
 name = "egui-sdl3-platform"
-version = "0.1.1"
+version = "0.2.1"
 edition = "2021"
-authors = ["cohaereo <cohae@cohae.dev>"]
+authors = ["cohaereo <cohae@cohae.dev>", "ErikWDev <ErikWDev@gmail.com>"]
 description = "SDL3 platform integration for egui"
 homepage = "https://github.com/cohaereo/egui-sdl3-platform"
 repository = "https://github.com/cohaereo/egui-sdl3-platform"

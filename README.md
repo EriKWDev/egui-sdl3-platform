@@ -12,6 +12,8 @@ let window = video_subsystem
     .build()
     .expect("Failed to create window");
 
+let egui_context = egui::Context::default();
+
 let mut egui_sdl3 = egui_sdl3_platform::Platform::new(&sdl, &window)
     .expect("Failed to create egui_sdl3 platform");
 
@@ -22,15 +24,15 @@ let mut event_pump = sdl.event_pump().unwrap();
             sdl3::event::Event::Quit { .. } => break 'app,
             _ => {}
         }
-        egui_sdl3.handle_event(&event, &video_subsystem);
+        egui_sdl3.handle_event(&event, &video_subsystem, &egui_context);
     }
 
-    let output = {
-        let ctx = egui_sdl3.begin_frame(&window);
-        // draw the UI using the given egui context
 
-        egui_sdl3.end_frame(&mut sdl.video().unwrap()).unwrap()
-    };
+    egui_sdl3.begin_frame(&window);
+    // draw egui ui with your egui_context and finish with the egui::FullOutput
+    let full_output: egui::FullOutput = /* .. */;
+    egui_sdl3.end_frame(&mut sdl.video().unwrap(), &egui_context, &full_output);
+
     
     // draw the output using your graphics API
 
