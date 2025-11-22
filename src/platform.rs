@@ -128,7 +128,10 @@ impl Platform {
 
             // Handle a key being pressed
             Event::KeyDown {
-                keycode, keymod, ..
+                keycode,
+                keymod,
+                repeat,
+                ..
             } => {
                 // Make sure there is a keycode
                 if let Some(keycode) = keycode {
@@ -172,7 +175,7 @@ impl Platform {
                             key,
                             physical_key: Some(key),
                             pressed: true,
-                            repeat: false,
+                            repeat: *repeat,
                             modifiers: self.modifiers,
                         });
                     }
@@ -181,7 +184,10 @@ impl Platform {
             }
             // Handle a key being released
             Event::KeyUp {
-                keycode, keymod, ..
+                keycode,
+                keymod,
+                repeat,
+                ..
             } => {
                 // Make sure there is a keycode
                 if let Some(keycode) = keycode {
@@ -209,7 +215,7 @@ impl Platform {
                             key,
                             physical_key: Some(key),
                             pressed: false,
-                            repeat: false,
+                            repeat: *repeat,
                             modifiers: self.modifiers,
                         });
                     }
