@@ -24,7 +24,11 @@ let mut event_pump = sdl.event_pump().unwrap();
             sdl3::event::Event::Quit { .. } => break 'app,
             _ => {}
         }
-        egui_sdl3.handle_event(&event, &video_subsystem, &egui_context);
+
+        let consumed = egui_sdl3.handle_event(&event, &video_subsystem, &egui_context);
+        if !consumed {
+            // handle event yourself
+        }
     }
 
 

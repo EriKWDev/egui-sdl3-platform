@@ -47,13 +47,13 @@ impl Platform {
         })
     }
 
-    /// Handle a sdl3 event
+    /// Handle a sdl3 event, returns if it was consumed
     pub fn handle_event(
         &mut self,
         event: &Event,
         video: &sdl3::VideoSubsystem,
         egui_ctx: &egui::Context,
-    ) {
+    ) -> bool {
         match event {
             // Handle reizing
             Event::Window {
@@ -67,6 +67,7 @@ impl Platform {
                         y: *h as f32,
                     },
                 ));
+                false
             }
             // Handle the mouse button being held down
             Event::MouseButtonDown { mouse_btn, .. } => {
@@ -84,7 +85,7 @@ impl Platform {
                         modifiers: self.modifiers,
                     });
                 }
-                egui_ctx.wants_pointer_input();
+                egui_ctx.wants_pointer_input()
             }
             // Handle the mouse button being released
             Event::MouseButtonUp { mouse_btn, .. } => {
@@ -102,7 +103,7 @@ impl Platform {
                         modifiers: self.modifiers,
                     });
                 }
-                egui_ctx.wants_pointer_input();
+                egui_ctx.wants_pointer_input()
             }
             // Handle mouse motion
             Event::MouseMotion { x, y, .. } => {
@@ -111,7 +112,7 @@ impl Platform {
                 self.raw_input
                     .events
                     .push(egui::Event::PointerMoved(self.pointer_pos));
-                egui_ctx.wants_pointer_input();
+                egui_ctx.wants_pointer_input()
             }
             // Handle the mouse scrolling
             Event::MouseWheel { x, y, .. } => {
@@ -123,7 +124,7 @@ impl Platform {
                     delta,
                     modifiers: egui::Modifiers::NONE,
                 });
-                egui_ctx.wants_pointer_input();
+                egui_ctx.wants_pointer_input()
             }
 
             // Handle a key being pressed
@@ -180,7 +181,7 @@ impl Platform {
                         });
                     }
                 }
-                egui_ctx.wants_keyboard_input();
+                egui_ctx.wants_keyboard_input()
             }
             // Handle a key being released
             Event::KeyUp {
@@ -220,15 +221,15 @@ impl Platform {
                         });
                     }
                 }
-                egui_ctx.wants_keyboard_input();
+                egui_ctx.wants_keyboard_input()
             }
             // Handle text input
             Event::TextInput { text, .. } => {
                 self.raw_input.events.push(egui::Event::Text(text.clone()));
-                egui_ctx.wants_keyboard_input();
+                egui_ctx.wants_keyboard_input()
             }
 
-            _ => {}
+            _ => false,
         }
     }
 
