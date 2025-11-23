@@ -25,6 +25,15 @@ impl ToEguiKey for sdl3::keyboard::Keycode {
             Keycode::End => Key::End,
             Keycode::PageDown => Key::PageDown,
             Keycode::PageUp => Key::PageUp,
+
+            Keycode::Equals => Key::Equals,
+            Keycode::Backslash => Key::Backslash,
+            Keycode::Slash => Key::Slash,
+            Keycode::Minus => Key::Minus,
+            Keycode::Colon => Key::Colon,
+            Keycode::Semicolon => Key::Semicolon,
+            Keycode::Question => Key::Questionmark,
+
             Keycode::Kp0 | Keycode::_0 => Key::Num0,
             Keycode::Kp1 | Keycode::_1 => Key::Num1,
             Keycode::Kp2 | Keycode::_2 => Key::Num2,
@@ -61,6 +70,32 @@ impl ToEguiKey for sdl3::keyboard::Keycode {
             Keycode::X => Key::X,
             Keycode::Y => Key::Y,
             Keycode::Z => Key::Z,
+
+            Keycode::F1 => Key::F1,
+            Keycode::F2 => Key::F2,
+            Keycode::F3 => Key::F3,
+            Keycode::F4 => Key::F4,
+            Keycode::F5 => Key::F5,
+            Keycode::F6 => Key::F6,
+            Keycode::F7 => Key::F7,
+            Keycode::F8 => Key::F8,
+            Keycode::F9 => Key::F9,
+            Keycode::F10 => Key::F10,
+            Keycode::F11 => Key::F11,
+            Keycode::F12 => Key::F12,
+            Keycode::F13 => Key::F13,
+            Keycode::F14 => Key::F14,
+            Keycode::F15 => Key::F15,
+            Keycode::F16 => Key::F16,
+            Keycode::F17 => Key::F17,
+            Keycode::F18 => Key::F18,
+            Keycode::F19 => Key::F19,
+            Keycode::F20 => Key::F20,
+            Keycode::F21 => Key::F21,
+            Keycode::F22 => Key::F22,
+            Keycode::F23 => Key::F23,
+            Keycode::F24 => Key::F24,
+
             _ => {
                 return None;
             }
